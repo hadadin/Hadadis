@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+/* Warm-paper aesthetic per PRD 10.3 */
+:root {
+  --paper: #faf6ef;
+  --paper-card: #fffdf9;
+  --ink: #2e2a24;
+  --ink-muted: #7a7266;
+  --accent: #c1673a; /* terracotta */
+  --accent-soft: #f1e0d3;
+  --line: #e8e0d2;
+  --ok: #6b8f5e;
+  --warn: #d9a441;
+  --danger: #c1453a;
+  --background: var(--paper);
+  --foreground: var(--ink);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-paper-card: var(--paper-card);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-line: var(--line);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+.card {
+  background: var(--paper-card);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+}
+
+/* Agent proposal styling — dashed border + 🤖, per PRD 10.4.
+   Not populated with live data until Phase 2, but the component/style
+   exists now so agents can drop straight in later. */
+.agent-proposal {
+  background: var(--paper-card);
+  border: 1.5px dashed var(--accent);
+  border-radius: 1rem;
+}
+
+.budget-bar-track {
+  background: var(--accent-soft);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.budget-bar-fill[data-state="ok"] {
+  background: var(--ok);
+}
+.budget-bar-fill[data-state="warning"] {
+  background: var(--warn);
+}
+.budget-bar-fill[data-state="danger"] {
+  background: var(--danger);
+}
