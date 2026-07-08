@@ -120,20 +120,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 function SignInScreen() {
   const supabase = createClient();
   const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
+    setSubmitting(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
     });
-    if (error) setError(error.message);
-    else setSent(true);
+    setSubmitting(false);
+    if (error) {
+      setError(
+        error.message === "Invalid login credentials"
+          ? "Wrong email or password. Try again."
+          : error.message
+      );
+    }
+    // On success, onAuthStateChange fires and the app renders.
   }
 
   return (
@@ -141,31 +148,36 @@ function SignInScreen() {
       <div className="card w-full max-w-sm p-8">
         <h1 className="text-xl font-semibold">House Hadadi 🏡</h1>
         <p className="mt-1 text-sm text-ink-muted">
-          Sign in with the email registered to your household.
+          Sign in with your household email and password.
         </p>
-        {sent ? (
-          <p className="mt-6 text-sm">
-            Check <strong>{email}</strong> for a magic link.
-          </p>
-        ) : (
-          <form onSubmit={handleSubmit} className="mt-6 space-y-3">
-            <input
-              type="email"
-              required
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm outline-none focus:border-accent"
-            />
-            {error && <p className="text-sm text-danger">{error}</p>}
-            <button
-              type="submit"
-              className="w-full rounded-lg bg-accent px-3 py-2 text-sm font-medium text-white"
-            >
-              Send magic link
-            </button>
-          </form>
-        )}
+        <form onSubmit={handleSubmit} className="mt-6 space-y-3">
+          <input
+            type="email"
+            required
+            autoComplete="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm outline-none focus:border-accent"
+          />
+          <input
+            type="password"
+            required
+            autoComplete="current-password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm outline-none focus:border-accent"
+          />
+          {error && <p className="text-sm text-danger">{error}</p>}
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full rounded-lg bg-accent px-3 py-2 text-sm font-medium text-white disabled:opacity-60"
+          >
+            {submitting ? "Signing in…" : "Sign in"}
+          </button>
+        </form>
       </div>
     </div>
   );
